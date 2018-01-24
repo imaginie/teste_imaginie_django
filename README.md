@@ -11,9 +11,9 @@ Criar um command no Django ou uma nova migration para popular o seu banco, a par
 
 - Implementar as requisições REST de retrieve, list, create, update e delete para a tabela playlist.
 
-- O usuário normal poderá fazer todas as requisições apenas em suas playlists. Nas playlists de terceiros, apenas as requisições GET.
-
 - O admin tem acesso livre a todas as requisições de qualquer playlist.
+ 
+- O usuário normal poderá fazer todas as requisições apenas em suas playlists. Nas playlists de terceiros, apenas as requisições GET.
 
 - GET /api/playlists/[id]/musics retorna uma lista de todas as musicas de uma playlist.
 
