@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from django import apps
+from django.contrib.auth.models import User
 import csv
 from store_api.models import *
 
@@ -24,9 +24,10 @@ class Command(BaseCommand):
 
                     band = Band.objects.update_or_create(name=_object_dict.pop("band"))[0]
 
-                    music = Music.objects.update_or_create(name=_object_dict.pop("music_name"), genre=genre, band=band)[0]
-
-                    playlist = Playlist.objects.update_or_create(name=_object_dict.pop("playlist"))[0]
+                    music = Music.objects.update_or_create(name=_object_dict.pop("music_name"), genre=genre,
+                                                           band=band)[0]
+                    user = User.objects.filter(is_superuser=True).order_by('date_joined').get()
+                    playlist = Playlist.objects.update_or_create(owner=user, name=_object_dict.pop("playlist"))[0]
                     playlist.musics.add(music)
 
                     line_count += 1

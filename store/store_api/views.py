@@ -14,6 +14,7 @@ from rest_framework.status import (
     HTTP_200_OK,
 )
 
+from .permissions import *
 from .filters import *
 from .serializers import *
 
@@ -22,7 +23,7 @@ from .serializers import *
 class CustomAuthToken(viewsets.ViewSet):
     serializer_class = AuthTokenSerializer
     permission_classes_by_action = {'login': [AllowAny],
-                                    'logout': [IsAuthenticated]}
+                                    'default': [IsAuthenticated]}
 
     def get_permissions(self):
         try:
@@ -58,6 +59,8 @@ class CustomAuthToken(viewsets.ViewSet):
 
 
 class CustomViewSet(viewsets.ViewSet):
+    permission_classes = (IsAuthenticated ,IsOwnerOrAdminOrReadOnly)
+
     @swagger_auto_schema(request_body=None, responses={200: PlaylistSerializer})
     def add(self, request, *args, **kwargs):
         queryset = Playlist.objects
@@ -70,6 +73,7 @@ class CustomViewSet(viewsets.ViewSet):
         if not queryset_out.get().musics.exclude(id__in=queryset_in.values('musics')).exists():
             return Response(status=HTTP_304_NOT_MODIFIED)
         playlist = queryset_in.get()
+        self.check_object_permissions(request, playlist)
         for music in queryset_out.get().musics.all():
             playlist.musics.add(music)
         playlist.save()
@@ -78,27 +82,16 @@ class CustomViewSet(viewsets.ViewSet):
 
 
 class PlaylistViewSet(viewsets.ModelViewSet):
-    # lookup_field = 'id'
     queryset = Playlist.objects
     serializer_class = PlaylistSerializer
     filter_class = PlaylistFilter
-    permission_classes = (IsAuthenticated,)
-    permission_classes_by_action = {'list': [IsAuthenticated],
-                                    'default': [IsAuthenticated],
-                                    }
-
-    def get_permissions(self):
-        try:
-            # return permission_classes depending on 'action'
-            return [permission() for permission in self.permission_classes_by_action[self.action]]
-        except KeyError:
-            # action is not set return default permission_classes
-            return [permission() for permission in self.permission_classes_by_action['default']]
+    permission_classes = (IsAuthenticated , IsOwnerOrAdminOrReadOnly)
 
 
 class MusicViewSet(viewsets.ModelViewSet):
     serializer_class = MusicSerializer
     filter_class = MusicFilter
+    permission_classes = (IsAuthenticated ,IsOwnerOrAdminOrReadOnly)
 
     def list(self, request, *args, **kwargs):
         f = self.filter_class(request.GET, queryset=Playlist.objects.get(id=kwargs["id"]).musics)

@@ -34,6 +34,8 @@ class MusicSerializer(serializers.ModelSerializer):
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
+    owner = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
+    owner_name = serializers.CharField(source='owner.username', read_only=True)
     musics = serializers.PrimaryKeyRelatedField(queryset=Music.objects, many=True)
 
     class Meta:

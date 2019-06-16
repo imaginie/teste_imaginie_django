@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 
 class Genre(models.Model):
@@ -40,6 +40,7 @@ class Music(models.Model):
 
 
 class Playlist(models.Model):
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     musics = models.ManyToManyField(Music)
 
