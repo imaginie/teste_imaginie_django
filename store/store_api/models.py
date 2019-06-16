@@ -2,7 +2,8 @@
 
 from __future__ import unicode_literals
 from django.db import models
-
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 
 class Genre(models.Model):
     name = models.CharField(max_length=20)
@@ -28,7 +29,8 @@ class Band(models.Model):
 
 class Music(models.Model):
     name = models.CharField(max_length=100)
-
+    band = models.ForeignKey("Band", on_delete=models.CASCADE, related_name='musics')
+    genre = models.ForeignKey("Genre", on_delete=models.CASCADE, related_name='genres')
     class Meta:
         verbose_name = u'Music'
         verbose_name_plural = u'Musics'
@@ -39,6 +41,8 @@ class Music(models.Model):
 
 class Playlist(models.Model):
     name = models.CharField(max_length=100)
+    musics = models.ManyToManyField(Music)
+
 
     class Meta:
         verbose_name = u'Playlist'

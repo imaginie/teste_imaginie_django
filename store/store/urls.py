@@ -17,9 +17,23 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework.authtoken.views import obtain_auth_token
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Imagine Test API",
+        default_version='v1',
+    ),
+    public=True,
+    permission_classes=(permissions.IsAuthenticatedOrReadOnly,),
+)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include('store_api.urls')),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]
