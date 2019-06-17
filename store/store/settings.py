@@ -25,7 +25,7 @@ SECRET_KEY = 'q4qv)+w+s)vwkzw63*xfu#7+i+d_3#kym$yp^3&sefh+03)5*#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['docker.lan', 'lab3.messeder.com',]
 
 
 # Application definition
